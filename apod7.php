@@ -2,19 +2,16 @@
 require_once "url_tools.php";
 define (
     "URL_DE_TESTE_PARA_CONSUMO",
-    "https://apod.nasa.gov/apod/ap171213.html"
+    "https://apod.nasa.gov/apod/ap171210.html"
 //"http://arturmarques.com/"
 );
-
-define("APOD_PREFIX","https://apod.nasa.gov/apod/");
-
+define ("APOD_PREFIX", "https://apod.nasa.gov/apod/");
 function apodUrlRelativeToAbsolute(
     $pUrlRelative
 ){
     $urlAbs = APOD_PREFIX.$pUrlRelative;
     return $urlAbs;
 }//apodUrlRelativeToAbsolute
-
 function downloaderInseguro(
     $pUrl
 ){
@@ -142,45 +139,44 @@ function urlsPresentesNoHTML(
     }//foreach
     return $urls;
 }//urlsPresentesNoHTML
-
-function apodGetAbsoluteUrlForImageIOTDAtHtmlUrl(
+function apodGetAbsoluteUrlForIOTDAtHtmlUrl(
     $pApodHtmlUrl
 ){
-    $todosOsUrl = urlsPresentesNoURL($pApodHtmlUrl);
-
-    $todosOsUrl = urlsPresentesNoURL(URL_DE_TESTE_PARA_CONSUMO);
+    $ret = false;
+    $todosOsUrl =
+        urlsPresentesNoURL($pApodHtmlUrl);
     $filtrosAceitacao =[".jpg", ".png"];
-    $urlsAposOrganizacaoEFiltragem = organizadorFiltrador($todosOsUrl, $filtrosAceitacao);
+    $urlsAposOrganizacaoEFiltragem =
+        organizadorFiltrador($todosOsUrl, $filtrosAceitacao);
     $urlsDoDia = $urlsAposOrganizacaoEFiltragem[KEY_REL_URL];
-
-    $bCautela = count($urlsDoDia)===1;
-
-    if($bCautela){
+    $bCautela = count($urlsDoDia)>=1;
+    if ($bCautela){
         $ret = apodUrlRelativeToAbsolute($urlsDoDia[0]);
-    }//if
-
+    }
     return $ret;
-}//apodGetAbsoluteUrlForImageIOTDAtHtmlUrl
-
-/*echo apodGetAbsoluteUrlForImageIOTDAtHtmlUrl(URL_DE_TESTE_PARA_CONSUMO);*/
-
+}//apodGetAbsoluteUrlForIOTDAtHtmlUrl
+/*
+echo apodGetAbsoluteUrlForIOTDAtHtmlUrl
+    (URL_DE_TESTE_PARA_CONSUMO);
+*/
 function apodGetAbsoluteUrlForIOTD(
     $pY,
     $pM,
     $pD
 ){
-    $htmlUrl = apodHtmlUrlForDate($pY,$pM,$pD);
-    return apodGetAbsoluteUrlForImageIOTDAtHtmlUrl($htmlUrl);
-}
-
-function apodHtmlUrlForDate(
+    $htmlUrl = apodHtmlUrlForDate ($pY, $pM, $pD);
+    return apodGetAbsoluteUrlForIOTDAtHtmlUrl($htmlUrl);
+}//apodGetAbsoluteUrlForIOTD
+//https://apod.nasa.gov/apod/ap171210.html
+function apodHtmlUrlForDate (
     $pY,
     $pM,
     $pD
 ){
-    $yymmdd = date("ymd");
-    $url = APOD_PREFIX."ap.$yymmdd.html";
+    $tempoCorrespondenteData =
+        mktime(null, null, null, $pM, $pD, $pY);
+    $yymmdd = date("ymd", $tempoCorrespondenteData);
+    $url = APOD_PREFIX."ap$yymmdd.html";
     return $url;
 }//apodHtmlUrlForDate
-
-echo apodGetAbsoluteUrlForIOTD(2016,12,25);
+echo apodGetAbsoluteUrlForIOTD(2016, 12, 25);
