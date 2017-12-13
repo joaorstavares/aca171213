@@ -5,6 +5,16 @@ define (
     "https://apod.nasa.gov/apod/ap171213.html"
 //"http://arturmarques.com/"
 );
+
+define("APOD_PREFIX","https://apod.nasa.gov/apod/");
+
+function apodUrlRelativeToAbsolute(
+    $pUrlRelative
+){
+    $urlAbs = APOD_PREFIX.$pUrlRelative;
+    return $urlAbs;
+}//apodUrlRelativeToAbsolute
+
 function downloaderInseguro(
     $pUrl
 ){
@@ -132,10 +142,24 @@ function urlsPresentesNoHTML(
     }//foreach
     return $urls;
 }//urlsPresentesNoHTML
-$todosOsUrl =
-    urlsPresentesNoURL(URL_DE_TESTE_PARA_CONSUMO);
-$filtrosAceitacao =[".jpg", ".png"];
-$urlsAposOrganizacaoEFiltragem =
-    organizadorFiltrador($todosOsUrl, $filtrosAceitacao);
-$urlsDoDia = $urlsAposOrganizacaoEFiltragem[KEY_REL_URL];
-var_dump($urlsDoDia);
+
+function apodGetAbsoluteUrlForImageIOTDAtHtmlUrl(
+    $pApodHtmlUrl
+){
+    $todosOsUrl = urlsPresentesNoURL($pApodHtmlUrl);
+
+    $todosOsUrl = urlsPresentesNoURL(URL_DE_TESTE_PARA_CONSUMO);
+    $filtrosAceitacao =[".jpg", ".png"];
+    $urlsAposOrganizacaoEFiltragem = organizadorFiltrador($todosOsUrl, $filtrosAceitacao);
+    $urlsDoDia = $urlsAposOrganizacaoEFiltragem[KEY_REL_URL];
+
+    $bCautela = count($urlsDoDia)===1;
+
+    if($bCautela){
+        $ret = apodUrlRelativeToAbsolute($urlsDoDia[0]);
+    }//if
+
+    return $ret;
+}//apodGetAbsoluteUrlForImageIOTDAtHtmlUrl
+
+echo apodGetAbsoluteUrlForImageIOTDAtHtmlUrl(URL_DE_TESTE_PARA_CONSUMO);
